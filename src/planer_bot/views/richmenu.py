@@ -10,7 +10,7 @@ from linebot.v3.messaging.models import (  # type: ignore
     RichMenuSize,
 )
 
-from planer_bot.config import line_bot_api, settings
+from planer_bot.config import db, line_bot_api, settings
 
 logger = getLogger("uvicorn.app")
 
@@ -24,7 +24,7 @@ def generate_richmenu() -> RichMenuRequest:
         areas=[
             RichMenuArea(
                 bounds=RichMenuBounds(x=0, y=0, width=2500, height=843),
-                action=PostbackAction(label="ケアプラン作成", data="create_care_plan"),
+                action=PostbackAction(label="ケアプラン作成", data="create_care_plan", displayText="最初からケアプラン作成"),
             ),
         ],
     )
@@ -60,4 +60,30 @@ async def update_richmenu() -> None:
     path = Path(__file__).parent / "data/richmenu.png"
     upload_richmenu_image(richmenu_id, path)
     await line_bot_api.set_default_rich_menu(richmenu_id)
+
+    db.collection("settings").document("richmenu").set(
+        {"richmenu_id": richmenu_id}
+    )
     logger.info(f"Richmenu updated. {richmenu_id=}")
+
+
+async def get_default_richmenu_id() -> str:
+    doc = db.collection("settings").document("richmenu").get().to_dict() or {}
+    richmenu_id = doc.get("richmenu_id")
+    if not richmenu_id:
+        await update_richmenu()
+        doc = db.collection("settings").document("richmenu").get().to_dict() or {}
+        richmenu_id = doc.get("richmenu_id")
+        if not richmenu_id:
+            raise ValueError("richmenu_idが設定されていません")
+    return richmenu_id
+
+
+def link_rich_menu_to_user(line_identifier: str, rich_menu_id: str) -> None:
+    url = f"https://api.line.me/v2/bot/user/{line_identifier}/richmenu/{rich_menu_id}"
+    headers = {
+        "Authorization": f"Bearer {settings.LINE_CHANNEL_ACCESS_TOKEN}",
+    }
+    response = requests.post(url, headers=headers)
+    if response.status_code != 200:
+        raise Exception(f"Error linking rich menu: {response.text}")

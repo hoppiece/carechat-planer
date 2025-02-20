@@ -22,29 +22,6 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
 
     user_ref = db.collection("users").document(line_identifier)
     user_info = user_ref.get().to_dict()
-    if text == "スタート":
-        user_ref.update({"count_generate_care_plan": firestore.Increment(1), "answers": {
-                "question_1": None,
-                "question_2": None,
-                "question_3": None,
-                "question_4": None,
-                "question_5": None,
-                "question_6": None,
-                "question_7": None,
-                "question_8": None,
-            },
-            "state": "wait_q1"})
-
-        await line_bot_api.reply_message(
-            ReplyMessageRequest(
-            reply_token=event.reply_token,
-            messages=[
-                TextMessage(text="それでは、いくつか質問をするので回答をお願いします。質問は合計で8つです。"),
-                TextMessage(text="Q.1 現在、生活の中で特に困っていることや、解決したい課題を教えてください。")
-            ],
-            )
-        )
-
 
     if user_info.get("state") == "wait_q1":
         user_ref.update({"answers.question_1": text, "state": "wait_q2"})

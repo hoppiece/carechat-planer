@@ -72,3 +72,4 @@ def basic_authenticate(
     return credentials
 
 BasicAuthDep = Annotated[HTTPBasicCredentials, Depends(basic_authenticate)]
+

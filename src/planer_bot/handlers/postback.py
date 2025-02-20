@@ -1,6 +1,7 @@
 import urllib.parse
 from logging import getLogger
 
+from firebase_admin import firestore  # type: ignore
 from jinja2 import Environment, FileSystemLoader
 from linebot.v3.messaging import (  # type: ignore
     FlexMessage,
@@ -38,6 +39,30 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
 
 
     text = event.postback.data
+
+    if text == "create_care_plan":
+        user_ref.update({"count_generate_care_plan": firestore.Increment(1), "answers": {
+                "question_1": None,
+                "question_2": None,
+                "question_3": None,
+                "question_4": None,
+                "question_5": None,
+                "question_6": None,
+                "question_7": None,
+                "question_8": None,
+            },
+            "state": "wait_q1"})
+
+        await line_bot_api.reply_message(
+            ReplyMessageRequest(
+            reply_token=event.reply_token,
+            messages=[
+                TextMessage(text="それでは、いくつか質問をするので回答をお願いします🙏 質問は合計で8つです"),
+                TextMessage(text="Q.1 現在、生活の中で特に困っていることや、解決したい課題を教えてください。")
+            ],
+            )
+        )
+
     if user_info.get("state") == "wait_q3":
         user_ref.update({"answers.question_3": text, "state": "wait_q4"})
         await line_bot_api.reply_message(
