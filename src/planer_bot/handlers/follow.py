@@ -1,9 +1,10 @@
 from logging import getLogger
 
+from firebase_admin import firestore  # type: ignore
 from linebot.v3.messaging import ReplyMessageRequest, TextMessage  # type: ignore
 from linebot.v3.webhooks import FollowEvent  # type: ignore
 
-from planer_bot.config import handler, line_bot_api
+from planer_bot.config import db, handler, line_bot_api
 
 logger = getLogger("uvicorn.app")
 
@@ -19,8 +20,8 @@ async def handle_follow(event: FollowEvent) -> None:
     )
 
     welcome_message_1 = f"{line_display_name}さん、友達登録ありがとうございます。"
-    welcome_message_2 = "AIケアプラン作成のでもアプリです。"
-    welcome_message_3 = "今から質問をいくつかしますので、お答えください。"
+    welcome_message_2 = "AIケアプラン作成のデモアプリです。"
+    welcome_message_3 = "ケアプラン作成を開始するには「スタート」と入力してください。最初からやり直す場合も同様にします。"
 
     await line_bot_api.reply_message(
         ReplyMessageRequest(
@@ -34,4 +35,13 @@ async def handle_follow(event: FollowEvent) -> None:
     )
 
     # Save the user information
-    # TODO
+    user_ref = db.collection("users").document(line_identifier)
+    user_ref.set(
+        {
+            "line_display_name": line_display_name,
+            "line_identifier": line_identifier,
+            "created_at": firestore.SERVER_TIMESTAMP,
+            "count_generate_care_plan": 0,
+        }
+    )
+    logger.info(f"User information saved. {line_identifier=}")

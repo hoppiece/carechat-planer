@@ -1,6 +1,9 @@
 import os
 from logging import getLogger
 
+import firebase_admin
+import openai
+from firebase_admin import credentials, firestore
 from linebot.v3.messaging import (  # type: ignore
     AsyncApiClient,
     AsyncMessagingApi,
@@ -22,6 +25,8 @@ class Settings(BaseSettings):
     LINE_CHANNEL_SECRET: str
     OPENAI_API_KEY: str
 
+    FIRESTORE_EMULATOR_HOST: str | None = None
+
 settings = Settings() # type: ignore
 
 
@@ -30,3 +35,16 @@ handler = AsyncWebhookHandler(settings.LINE_CHANNEL_SECRET)
 line_bot_api = AsyncMessagingApi(
     AsyncApiClient(Configuration(access_token=settings.LINE_CHANNEL_ACCESS_TOKEN))
 )
+
+
+# FireStore Client
+if settings.FIRESTORE_EMULATOR_HOST:
+    db = firestore.Client()
+else:
+    cred = credentials.ApplicationDefault()
+    firebase_admin.initialize_app(cred)
+    db = firestore.Client()
+
+
+# OpenAI Client
+openai_client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)

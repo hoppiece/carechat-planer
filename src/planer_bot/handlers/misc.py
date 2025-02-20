@@ -9,7 +9,7 @@ from linebot.v3.webhooks import (  # type: ignore
     UnsendEvent,
 )
 
-from planer_bot.config import handler
+from planer_bot.config import db, handler
 
 logger = getLogger("uvicorn.app")
 
@@ -26,8 +26,9 @@ async def hadle_unsend(event: UnsendEvent) -> None:  # type: ignore[no-any-unimp
 async def handle_unfollow(event: UnfollowEvent) -> None:  # type: ignore[no-any-unimported]
     line_identifier: str = event.source.user_id
     logger.info(f"UnfollowEvent. {line_identifier=}")
-
-
+    user_ref = db.collection("users").document(line_identifier)
+    user_ref.delete()
+    logger.info(f"User information deleted. {line_identifier=}")
 
 @handler.add(JoinEvent)
 async def handle_join(event: JoinEvent) -> None:  # type: ignore[no-any-unimported]
