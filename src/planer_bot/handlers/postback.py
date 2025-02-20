@@ -41,7 +41,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
     text = event.postback.data
 
     if text == "create_care_plan":
-        user_ref.update({"count_generate_care_plan": firestore.Increment(1), "answers": {
+        user_ref.set({"count_generate_care_plan": firestore.Increment(1), "answers": {
                 "question_1": None,
                 "question_2": None,
                 "question_3": None,
@@ -51,7 +51,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
                 "question_7": None,
                 "question_8": None,
             },
-            "state": "wait_q1"})
+            "state": "wait_q1"}, merge=True)
 
         await line_bot_api.reply_message(
             ReplyMessageRequest(
@@ -64,7 +64,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
         )
 
     if user_info.get("state") == "wait_q3":
-        user_ref.update({"answers.question_3": text, "state": "wait_q4"})
+        user_ref.set({"answers.question_3": text, "state": "wait_q4"}, merge=True)
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
@@ -87,7 +87,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
 
     elif user_info.get("state") == "wait_q4":
         if text == "その他 (自由入力)":
-            user_ref.update({"state": "wait_q4_other"})
+            user_ref.set({"state": "wait_q4_other"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -97,7 +97,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
                 )
             )
         else:
-            user_ref.update({"answers.question_4": text, "state": "wait_q5"})
+            user_ref.set({"answers.question_4": text, "state": "wait_q5"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -122,7 +122,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
 
     elif user_info.get("state") == "wait_q5":
         if text == "その他 (自由入力)":
-            user_ref.update({ "state": "wait_q5_other"})
+            user_ref.set({ "state": "wait_q5_other"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -132,7 +132,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
                 )
             )
         else:
-            user_ref.update({"answers.question_5": text, "state": "wait_q6"})
+            user_ref.set({"answers.question_5": text, "state": "wait_q6"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -155,7 +155,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
             )
     elif user_info.get("state") == "wait_q6":
         if text == "その他 (自由入力)":
-            user_ref.update({"state": "wait_q6_other"})
+            user_ref.set({"state": "wait_q6_other"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -165,7 +165,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
                 )
             )
         else:
-            user_ref.update({"answers.question_6": text, "state": "wait_q7"})
+            user_ref.set({"answers.question_6": text, "state": "wait_q7"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -187,7 +187,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
             )
     elif user_info.get("state") == "wait_q7":
         if text == "その他 (自由入力)":
-            user_ref.update({"state": "wait_q7_other"})
+            user_ref.set({"state": "wait_q7_other"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -197,7 +197,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
                 )
             )
         else:
-            user_ref.update({"answers.question_7": text, "state": "wait_q8"})
+            user_ref.set({"answers.question_7": text, "state": "wait_q8"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -218,7 +218,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
                 )
             )
     elif user_info.get("state") == "wait_q8":
-        user_ref.update({"answers.question_8": text, "state": "wait_gpt"})
+        user_ref.set({"answers.question_8": text, "state": "wait_gpt"}, merge=True)
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,

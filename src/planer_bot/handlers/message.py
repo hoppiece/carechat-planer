@@ -24,7 +24,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
     user_info = user_ref.get().to_dict()
 
     if user_info.get("state") == "wait_q1":
-        user_ref.update({"answers.question_1": text, "state": "wait_q2"})
+        user_ref.set({"answers.question_1": text, "state": "wait_q2"}, merge=True)
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
@@ -35,7 +35,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
         )
 
     elif user_info.get("state") == "wait_q2":
-        user_ref.update({"answers.question_2": text, "state": "wait_q3"})
+        user_ref.set({"answers.question_2": text, "state": "wait_q3"}, merge=True)
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
@@ -57,7 +57,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
         )
 
     elif user_info.get("state") == "wait_q4_other":
-        user_ref.update({"answers.question_4": text, "state": "wait_q5"})
+        user_ref.set({"answers.question_4": text, "state": "wait_q5"}, merge=True)
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
@@ -80,7 +80,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
             )
         )
     elif user_info.get("state") == "wait_q5_other":
-            user_ref.update({"answers.question_5": text, "state": "wait_q6"})
+            user_ref.set({"answers.question_5": text, "state": "wait_q6"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -102,7 +102,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
                 )
             )
     elif user_info.get("state") == "wait_q6_other":
-            user_ref.update({"answers.question_6": text, "state": "wait_q7"})
+            user_ref.set({"answers.question_6": text, "state": "wait_q7"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -123,7 +123,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
                 )
             )
     elif user_info.get("state") == "wait_q7_other":
-            user_ref.update({"answers.question_7": text, "state": "wait_q8"})
+            user_ref.set({"answers.question_7": text, "state": "wait_q8"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,

@@ -36,7 +36,7 @@ def generate_list_flex_bubble(  # type: ignore [no-any-unimported]
         # ボタン風のデザインを FlexBox で作成（ここにアクションを設定）
         name_box = FlexBox(
             layout="vertical",
-            backgroundColor="#007BFF",  # ボタンの背景色（青）
+            backgroundColor="#06c755", # LINE の緑
             cornerRadius="md",  # 角丸
             paddingAll="lg",  # 内側の余白を増やしてボタンを大きく
             #height="60px",  # ボタンの高さを強制的に大きくする
