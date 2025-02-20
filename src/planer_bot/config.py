@@ -1,8 +1,12 @@
 import os
+import secrets
 from logging import getLogger
+from typing import Annotated
 
-import firebase_admin
+import firebase_admin  # type: ignore
 import openai
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from firebase_admin import credentials, firestore
 from linebot.v3.messaging import (  # type: ignore
     AsyncApiClient,
@@ -24,6 +28,8 @@ class Settings(BaseSettings):
     LINE_CHANNEL_ACCESS_TOKEN: str
     LINE_CHANNEL_SECRET: str
     OPENAI_API_KEY: str
+    BASIC_AUTH_USERNAME: str = "admin"
+    BASIC_AUTH_PASSWORD: str 
 
     FIRESTORE_EMULATOR_HOST: str | None = None
 
@@ -48,3 +54,21 @@ else:
 
 # OpenAI Client
 openai_client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
+
+
+# Basic Auth settings
+security = HTTPBasic()
+def basic_authenticate(
+    credentials: HTTPBasicCredentials = Depends(security),
+) -> HTTPBasicCredentials:
+    correct_username = secrets.compare_digest(credentials.username, settings.BASIC_AUTH_USERNAME)
+    correct_password = secrets.compare_digest(credentials.password, settings.BASIC_AUTH_PASSWORD)
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials
+
+BasicAuthDep = Annotated[HTTPBasicCredentials, Depends(basic_authenticate)]

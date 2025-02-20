@@ -13,6 +13,7 @@ services:
     environment:
       FIRESTORE_EMULATOR_HOST: "firestore:8080"  # Firestore エミュレーターのホスト
       GOOGLE_CLOUD_PROJECT: "test-project"  # Firestore エミュレーターで使うプロジェクト名
+      BASIC_AUTH_PASSWORD: "password"  
       email_address: hop
     command: ["--reload", "--log-level", "debug"]
     depends_on:
