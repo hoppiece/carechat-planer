@@ -11,7 +11,7 @@ docker push ${IMAGE_NAME}
 ```
 
 ```
-gcloud run deploy your-app-service \
+gcloud run deploy planer-bot-service \
   --image ${IMAGE_NAME} \
   --region asia-northeast1 \
   --platform managed \
@@ -34,4 +34,13 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 
 ```
 gcloud auth configure-docker
+```
+
+
+After first time deploy, run once
+```
+gcloud run services add-iam-policy-binding planer-bot-service \
+  --member="allUsers" \
+  --role="roles/run.invoker" \
+  --region=asia-northeast1
 ```

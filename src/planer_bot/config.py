@@ -8,11 +8,8 @@ import openai
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from firebase_admin import credentials, firestore
-from linebot.v3.messaging import (  # type: ignore
-    AsyncApiClient,
-    AsyncMessagingApi,
-    Configuration,
-)
+from linebot.v3.messaging import AsyncApiClient  # type: ignore
+from linebot.v3.messaging import AsyncMessagingApi, Configuration
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from planer_bot.aio_webhook_handler import AsyncWebhookHandler  # type: ignore

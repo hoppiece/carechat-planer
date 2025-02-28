@@ -2,24 +2,18 @@ import urllib.parse
 from logging import getLogger
 
 from firebase_admin import firestore  # type: ignore
-from jinja2 import Environment, FileSystemLoader
-from linebot.v3.messaging import (  # type: ignore
-    FlexMessage,
-    PushMessageRequest,
-    ReplyMessageRequest,
-    ShowLoadingAnimationRequest,
-    TextMessage,
-)
+from linebot.v3.messaging import FlexMessage  # type: ignore
+from linebot.v3.messaging import (PushMessageRequest, ReplyMessageRequest,
+                                  ShowLoadingAnimationRequest, TextMessage)
 from linebot.v3.webhooks import PostbackEvent  # type: ignore
 
-from planer_bot import models
 from planer_bot.config import db, handler, line_bot_api, openai_client
+from planer_bot.gpt import anwer_to_care_planer
 from planer_bot.views.flexmessage_list import generate_list_flex_bubble
 
 # from hygeia_ai.service_plan_2 import generate_plan
 
 logger = getLogger("uvicorn.app")
-gpt_template = Environment(loader=FileSystemLoader(".")).get_template("careplan_prompt.j2")
 
 def get_form_url_add_new_patient(line_identifier: str) -> str:
     form_url_base = "https://docs.google.com/forms/d/e/1FAIpQLSedKqPBPeqQnP-ty43t--x1DBXcKyKcsBs7B_olOlG10VGTaw/viewform?usp=pp_url&entry.892889867="
@@ -64,7 +58,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
         )
 
     if user_info.get("state") == "wait_q3":
-        user_ref.set({"answers.question_3": text, "state": "wait_q4"}, merge=True)
+        user_ref.set({"answers": {"question_3": text}, "state": "wait_q4"}, merge=True)
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
@@ -97,7 +91,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
                 )
             )
         else:
-            user_ref.set({"answers.question_4": text, "state": "wait_q5"}, merge=True)
+            user_ref.set({"answers": {"question_4": text}, "state": "wait_q5"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -132,7 +126,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
                 )
             )
         else:
-            user_ref.set({"answers.question_5": text, "state": "wait_q6"}, merge=True)
+            user_ref.set({"answers": {"question_5": text}, "state": "wait_q6"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -165,7 +159,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
                 )
             )
         else:
-            user_ref.set({"answers.question_6": text, "state": "wait_q7"}, merge=True)
+            user_ref.set({"answers": {"question_6": text}, "state": "wait_q7"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -197,7 +191,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
                 )
             )
         else:
-            user_ref.set({"answers.question_7": text, "state": "wait_q8"}, merge=True)
+            user_ref.set({"answers": {"question_7": text}, "state": "wait_q8"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -218,7 +212,7 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
                 )
             )
     elif user_info.get("state") == "wait_q8":
-        user_ref.set({"answers.question_8": text, "state": "wait_gpt"}, merge=True)
+        user_ref.set({"answers": {"question_8": text}, "state": "wait_gpt"}, merge=True)
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
@@ -232,21 +226,8 @@ async def handle_postback(event: PostbackEvent) -> None:  # type: ignore[no-any-
         await line_bot_api.show_loading_animation(ShowLoadingAnimationRequest(chatId=event.source.user_id))
 
         answers = user_ref.get().to_dict().get("answers")
-        system_prompt = gpt_template.render()
-        user_input = "\n".join(
-            [f"{key}: {value}" for key, value in answers.items()]
-        )
-        completion = openai_client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {
-                    "role": "user",
-                    "content": user_input,
-                }
-            ]
-        )
-        careplan_text = completion.choices[0].message.content
+        logger.info(f"debug: {answers=}")
+        careplan_text = anwer_to_care_planer(openai_client, answers)
         await line_bot_api.push_message(
             PushMessageRequest(to=line_identifier, messages=[TextMessage(text="AIケアプランが作成されました。"), TextMessage(text=careplan_text)])
         )

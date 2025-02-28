@@ -13,7 +13,7 @@ RUN poetry install
 
 
 FROM python:3.12-slim-bookworm AS runner
-ENV PORT=8000 READINESS_CHECK_PATH=/healthz
+ENV PORT=8080 READINESS_CHECK_PATH=/healthz
 RUN \
   apt-get update && apt-get install --no-install-recommends -y \
   curl \
@@ -25,6 +25,6 @@ COPY --from=base \
   /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY src/planer_bot src/planer_bot
 WORKDIR /app/src/planer_bot
-EXPOSE 8000
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD curl -f http://0.0.0.0:8000/healthz || exit 1
-ENTRYPOINT ["sh", "-c", "exec python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD curl -f http://0.0.0.0:8080/healthz || exit 1
+ENTRYPOINT ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

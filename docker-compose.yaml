@@ -7,11 +7,11 @@ services:
       dockerfile: Dockerfile
       target: runner
     ports:
-      - "8000:8000"
+      - "8080:8080"
     volumes:
       - .:/app
     environment:
-      FIRESTORE_EMULATOR_HOST: "firestore:8080"  # Firestore エミュレーターのホスト
+      FIRESTORE_EMULATOR_HOST: "firestore:8081"  # Firestore エミュレーターのホスト
       GOOGLE_CLOUD_PROJECT: "test-project"  # Firestore エミュレーターで使うプロジェクト名
       BASIC_AUTH_PASSWORD: "password"  
       email_address: hop
@@ -20,7 +20,7 @@ services:
       firestore:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/healthz"]
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8080/healthz"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,11 +31,11 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command:
       - >
-        gcloud beta emulators firestore start --host-port=0.0.0.0:8080 
+        gcloud beta emulators firestore start --host-port=0.0.0.0:8081
     ports:
-      - "8080:8080"
+      - "8081:8081"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      test: ["CMD", "curl", "-f", "http://localhost:8081"]
       interval: 10s
       timeout: 5s
       retries: 5

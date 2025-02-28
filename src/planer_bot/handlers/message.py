@@ -1,12 +1,10 @@
 from logging import getLogger
 
 from firebase_admin import firestore  # type: ignore
-from linebot.v3.messaging import (  # type: ignore
-    FlexMessage,
-    ReplyMessageRequest,
-    TextMessage,
-)
-from linebot.v3.webhooks import MessageEvent, TextMessageContent  # type: ignore
+from linebot.v3.messaging import FlexMessage  # type: ignore
+from linebot.v3.messaging import ReplyMessageRequest, TextMessage
+from linebot.v3.webhooks import MessageEvent  # type: ignore
+from linebot.v3.webhooks import TextMessageContent
 
 from planer_bot.config import db, handler, line_bot_api
 from planer_bot.views.flexmessage_list import generate_list_flex_bubble
@@ -24,7 +22,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
     user_info = user_ref.get().to_dict()
 
     if user_info.get("state") == "wait_q1":
-        user_ref.set({"answers.question_1": text, "state": "wait_q2"}, merge=True)
+        user_ref.set({"answers": {"question_1": text}, "state": "wait_q2"}, merge=True)
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
@@ -35,7 +33,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
         )
 
     elif user_info.get("state") == "wait_q2":
-        user_ref.set({"answers.question_2": text, "state": "wait_q3"}, merge=True)
+        user_ref.set({"answers": {"question_2": text}, "state": "wait_q3"}, merge=True)
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
@@ -57,7 +55,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
         )
 
     elif user_info.get("state") == "wait_q4_other":
-        user_ref.set({"answers.question_4": text, "state": "wait_q5"}, merge=True)
+        user_ref.set({"answers": {"question_4": text}, "state": "wait_q5"}, merge=True)
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
@@ -80,7 +78,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
             )
         )
     elif user_info.get("state") == "wait_q5_other":
-            user_ref.set({"answers.question_5": text, "state": "wait_q6"}, merge=True)
+            user_ref.set({"answers": {"question_5":text}, "state": "wait_q6"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -102,7 +100,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
                 )
             )
     elif user_info.get("state") == "wait_q6_other":
-            user_ref.set({"answers.question_6": text, "state": "wait_q7"}, merge=True)
+            user_ref.set({"answers": {"question_6": text}, "state": "wait_q7"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
@@ -123,7 +121,7 @@ async def message_text(event: MessageEvent) -> None:  # type: ignore[no-any-unim
                 )
             )
     elif user_info.get("state") == "wait_q7_other":
-            user_ref.set({"answers.question_7": text, "state": "wait_q8"}, merge=True)
+            user_ref.set({"answers": {"question_7": text}, "state": "wait_q8"}, merge=True)
             await line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
