@@ -1,21 +1,28 @@
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, Template
+from functools import lru_cache
+from pathlib import Path
 
-gpt_template = Environment(loader=FileSystemLoader(".")).get_template("careplan_prompt_v2.0.j2")
+@lru_cache
+def get_template(template_name: str) -> Template:
+    base_dir = Path(__file__).resolve().parent
+    template_dir = base_dir / "templates"
+    env = Environment(loader=FileSystemLoader(str(template_dir)))
+    return env.get_template(template_name)
+
+
 
 def anwer_to_care_planer(openai_client, answers: dict) -> str:
-    system_prompt = gpt_template.render()
+    system_prompt = get_template("careplan_system_prompt.j2").render()
+    user_prompt = get_template("careplan_user_prompt.j2").render(answers)
 
-    user_input = "\n".join(
-        [f"{key}: {value}" for key, value in answers.items()]
-    )
     completion = openai_client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": system_prompt},
             {
                 "role": "user",
-                "content": user_input,
+                "content": user_prompt,
             }
         ]
     )
@@ -25,32 +32,3 @@ def anwer_to_care_planer(openai_client, answers: dict) -> str:
     else:
         return ""
 
-
-if __name__ == "__main__":
-    import argparse
-    import json
-
-    import openai
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--question-file", "-q", type=str)
-    args = parser.parse_args()
-
-    openai_client = openai.OpenAI()
-
-    if args.question_file:
-        with open(args.question_file, "r") as f:
-            answers = json.load(f)
-    else:
-        answers ={
-            "question_1": "歩行がつらくなり、デイサービスの利用が大変",
-            "question_2": "ショートステイの利用を増やしたい",
-            "question_3": "要介護2",
-            "question_4": "特に指示なし",
-            "question_5": "訪問介護",
-            "question_6": "トイレまでの移動が大変",
-            "question_7": "本人が一人で生活している（独居）",
-            "question_8": "1割負担"
-        }
-
-    print(anwer_to_care_planer(openai_client, answers))

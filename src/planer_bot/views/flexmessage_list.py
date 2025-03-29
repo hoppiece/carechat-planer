@@ -4,10 +4,13 @@ from linebot.v3.messaging import (  # type: ignore
     FlexText,
     PostbackAction,
 )
+from typing import Literal
 
+
+InputOptions = Literal["openKeyboard", "openRichMenu", "closeRichMenu"]
 
 def generate_list_flex_bubble(  # type: ignore [no-any-unimported]
-    labels: list[str], title: str | None = None, text_align: str = "center"
+    labels: list[str], title: str | None = None, text_align: str = "center", input_option: InputOptions | None  = None
 ) -> FlexBubble:
     """
     Flex Message のボタンリストを生成
@@ -47,6 +50,7 @@ def generate_list_flex_bubble(  # type: ignore [no-any-unimported]
                 label=label,
                 data=label,
                 displayText=label,
+                inputOption=input_option,  # ここに input_option を追加
             ),
             contents=[
                 FlexText(
