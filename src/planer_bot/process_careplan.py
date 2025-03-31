@@ -118,7 +118,7 @@ async def process_care_plan(event: PostbackEvent | MessageEvent) -> int:
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[
-                    TextMessage(text="Q.5 その他に現在、生活の中で困っていることは何ですか?\n\n"
+                    TextMessage(text="Q.6 その他に現在、生活の中で困っていることは何ですか?\n\n"
                                 "【例】\n•歩行がつらくなり、デイサービスの利用が大変\n"
                                 "•トイレに間に合わず失敗が増えた\n•最近、食事の量が減っている"),
                 ],
@@ -131,7 +131,7 @@ async def process_care_plan(event: PostbackEvent | MessageEvent) -> int:
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[
-                    TextMessage(text="Q.5 家族の介護負担や居住環境について教えてください。\n\n"
+                    TextMessage(text="Q.7 家族の介護負担や居住環境について教えてください。\n\n"
                                 "【例】\n•本人が独居 / 家族（同居）が主に介護 / 家族（別居）が定期的に介護\n"
                                 "•夜間の介護負担が大きい / 仕事と介護の両立が難しい / 食事・排泄介助が負担\n"""
                                 "•段差が多い / トイレ・浴室が使いづらい / 車椅子移動が困難"),
@@ -145,7 +145,7 @@ async def process_care_plan(event: PostbackEvent | MessageEvent) -> int:
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[
-                    TextMessage(text="Q.5 現在利用中のサービスを選択してください\n\n"
+                    TextMessage(text="Q.8 現在利用中のサービスを選択してください\n\n"
                                 "【例】\nデイサービス週１ / 訪問介護週２ / 福祉用具貸与○○"),
                 ],
             )
@@ -157,7 +157,7 @@ async def process_care_plan(event: PostbackEvent | MessageEvent) -> int:
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[
-                    TextMessage(text="Q.5 今後の生活や介護について、ご本人やご家族の希望を教えてください。\n\n"
+                    TextMessage(text="Q.9 今後の生活や介護について、ご本人やご家族の希望を教えてください。\n\n"
                                 "【例】\n"
                                 "•できるだけ自宅で生活を続けたいので夜間や食事のサポートがほしい\n"
                                 "•本人は希望してないが、家族は施設入所を検討している"),
