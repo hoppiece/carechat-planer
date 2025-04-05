@@ -43,11 +43,11 @@ line_bot_api = AsyncMessagingApi(
 
 # FireStore Client
 if settings.FIRESTORE_EMULATOR_HOST:
-    db = firestore.Client(settings.FIRESTORE_DATABASE)
+    db = firestore.Client(database=settings.FIRESTORE_DATABASE)
 else:
     cred = credentials.ApplicationDefault()
     firebase_admin.initialize_app(cred)
-    db = firestore.Client(settings.FIRESTORE_DATABASE)
+    db = firestore.Client(database=settings.FIRESTORE_DATABASE)
 
 
 # OpenAI Client
