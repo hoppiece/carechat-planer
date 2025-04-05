@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     BASIC_AUTH_PASSWORD: str 
 
     FIRESTORE_EMULATOR_HOST: str | None = None
+    FIRESTORE_DATABASE: str = "planer-bot"
 
 settings = Settings() # type: ignore
 
@@ -42,11 +43,11 @@ line_bot_api = AsyncMessagingApi(
 
 # FireStore Client
 if settings.FIRESTORE_EMULATOR_HOST:
-    db = firestore.Client()
+    db = firestore.Client(settings.FIRESTORE_DATABASE)
 else:
     cred = credentials.ApplicationDefault()
     firebase_admin.initialize_app(cred)
-    db = firestore.Client()
+    db = firestore.Client(settings.FIRESTORE_DATABASE)
 
 
 # OpenAI Client
