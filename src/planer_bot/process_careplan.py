@@ -5,7 +5,6 @@ from planer_bot.config import db, line_bot_api, openai_client
 from linebot.v3.messaging import (ReplyMessageRequest, # type: ignore
                                   TextMessage, FlexMessage, ShowLoadingAnimationRequest, PushMessageRequest)
 from planer_bot.views.flexmessage_list import generate_list_flex_bubble
-import firestore # type: ignore
 from planer_bot.gpt import anwer_to_care_planer
 
 logger = getLogger("uvicorn.app")
