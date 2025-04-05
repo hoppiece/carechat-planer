@@ -5,6 +5,7 @@ from planer_bot.config import db, line_bot_api, openai_client
 from linebot.v3.messaging import (ReplyMessageRequest, # type: ignore
                                   TextMessage, FlexMessage, ShowLoadingAnimationRequest, PushMessageRequest)
 from planer_bot.views.flexmessage_list import generate_list_flex_bubble
+import firestore # type: ignore
 from planer_bot.gpt import anwer_to_care_planer
 
 logger = getLogger("uvicorn.app")
@@ -183,6 +184,14 @@ async def process_care_plan(event: PostbackEvent | MessageEvent) -> int:
         answers = user_ref.get().to_dict().get("answers")
         logger.info(f"debug: {answers=}")
         careplan_text = anwer_to_care_planer(openai_client, answers)
+
+        query_log = {
+            "timestamp": firestore.SERVER_TIMESTAMP,
+            "answers": answers,
+            "careplan": careplan_text,
+        }
+        db.collection("careplan_query_log").add(query_log)
+
         await line_bot_api.push_message(
             PushMessageRequest(to=line_identifier, messages=[TextMessage(text="AIケアプランが作成されました。"), TextMessage(text=careplan_text)])
         )
