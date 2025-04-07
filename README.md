@@ -8,7 +8,7 @@ Set up your environment variables and credentials
 
 ```sh
 source set_env.sh
-gloud auth login
+gcloud auth login
 ```
 
 Build and push

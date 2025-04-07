@@ -183,6 +183,14 @@ async def process_care_plan(event: PostbackEvent | MessageEvent) -> int:
         answers = user_ref.get().to_dict().get("answers")
         logger.info(f"debug: {answers=}")
         careplan_text = anwer_to_care_planer(openai_client, answers)
+
+        query_log = {
+            "timestamp": firestore.SERVER_TIMESTAMP,
+            "answers": answers,
+            "careplan": careplan_text,
+        }
+        db.collection("careplan_query_log").add(query_log)
+
         await line_bot_api.push_message(
             PushMessageRequest(to=line_identifier, messages=[TextMessage(text="AIケアプランが作成されました。"), TextMessage(text=careplan_text)])
         )
