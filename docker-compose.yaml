@@ -8,6 +8,7 @@ services:
       - "8080:8080"
     volumes:
       - .:/app
+      - /app/.venv
     environment:
       FIRESTORE_EMULATOR_HOST: "firestore:8081"  # Firestore エミュレーターのホスト
       GOOGLE_CLOUD_PROJECT: "test-project"  # Firestore エミュレーターで使うプロジェクト名
@@ -66,6 +67,7 @@ services:
     network_mode: host
     volumes:
       - .:/app
+      - /app/.venv
     depends_on:
       ngrok:
         condition: service_healthy
