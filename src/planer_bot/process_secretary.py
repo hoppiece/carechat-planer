@@ -1,3 +1,4 @@
+import re
 from linebot.v3.webhooks import PostbackEvent, MessageEvent
 from planer_bot.config import db, line_bot_api, openai_client
 from linebot.v3.messaging import (
@@ -65,6 +66,7 @@ async def process_secretary(event: PostbackEvent | MessageEvent) -> None:
         )
 
         answer = answer_to_user_prompt_from_secretary(openai_client, user_text)
+        answer = filter_markdown_text(answer)
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
@@ -73,3 +75,22 @@ async def process_secretary(event: PostbackEvent | MessageEvent) -> None:
                 ],
             )
         )
+
+
+def filter_markdown_text(text: str) -> str:
+    """
+    Markdown 形式のテキストをフィルタリングして、LINE に適した形式に変換する関数
+
+    Args:
+        text (str): フィルタリングするテキスト
+
+    Returns:
+        str: フィルタリングされたテキスト
+    """
+    
+    # ** で囲まれたマークダウン部分を【】に変換
+    text = re.sub(r"\*\*(.*?)\*\*", r"【\1】", text)
+    # URLの引用 [text](url) を \n{url} に変換
+    text = re.sub(r"\[(.*?)\]\((.*?)\)", r"\n\2", text)
+
+    return text
