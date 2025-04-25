@@ -23,8 +23,21 @@ def generate_richmenu() -> RichMenuRequest:
         chatBarText="ケアプラン作成スタート",
         areas=[
             RichMenuArea(
-                bounds=RichMenuBounds(x=0, y=0, width=2500, height=843),
-                action=PostbackAction(label="ケアプラン作成", data="create_care_plan", displayText="最初からケアプラン作成"),
+                bounds=RichMenuBounds(x=0, y=0, width=1250, height=843),
+                action=PostbackAction(
+                    label="ケアプラン作成",
+                    data="create_care_plan",
+                    displayText="最初からケアプラン作成",
+                ),
+            ),
+            RichMenuArea(
+                bounds=RichMenuBounds(x=1250, y=0, width=1250, height=843),
+                action=PostbackAction(
+                    label="ケアマネ秘書",
+                    data="secretary",
+                    inputOption="openKeyboard",
+                    displayText="ケアマネ秘書",
+                ),
             ),
         ],
     )
@@ -52,7 +65,7 @@ async def update_richmenu() -> None:
     existing_richmenus = await line_bot_api.get_rich_menu_list()
     for richmenu in existing_richmenus.richmenus:
         await line_bot_api.delete_rich_menu(richmenu.rich_menu_id)
-    
+
     # Create a new richmenu
     richmenu_response = await line_bot_api.create_rich_menu(generate_richmenu())
     richmenu_id = richmenu_response.rich_menu_id
@@ -61,9 +74,7 @@ async def update_richmenu() -> None:
     upload_richmenu_image(richmenu_id, path)
     await line_bot_api.set_default_rich_menu(richmenu_id)
 
-    db.collection("settings").document("richmenu").set(
-        {"richmenu_id": richmenu_id}
-    )
+    db.collection("settings").document("richmenu").set({"richmenu_id": richmenu_id})
     logger.info(f"Richmenu updated. {richmenu_id=}")
 
 
