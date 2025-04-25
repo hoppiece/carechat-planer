@@ -15,7 +15,8 @@ def generate_list_flex_bubble(  # type: ignore [no-any-unimported]
     title: str | None = None,
     text_align: str = "center",
     input_option: InputOptions | None = None,
-    fill_in_text: str | None = None,
+    fill_in_text: bool = False,
+    display_text: bool = False,
 ) -> FlexBubble:
     """
     Flex Message のボタンリストを生成
@@ -54,9 +55,9 @@ def generate_list_flex_bubble(  # type: ignore [no-any-unimported]
             action=PostbackAction(  # ここにアクションを設定（ボタン全体をタップ可能に）
                 label=label,
                 data=label,
-                displayText=label,
+                displayText=label if display_text else None,
                 inputOption=input_option,  # ここに input_option を追加
-                fillInText=label if fill_in_text is not None else None,  # テキストボックスに表示するテキスト
+                fillInText=label if fill_in_text else None,
 
             ),
             contents=[

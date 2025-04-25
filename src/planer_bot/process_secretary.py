@@ -47,6 +47,7 @@ async def process_secretary(event: PostbackEvent | MessageEvent) -> None:
                                 "栄養士に質問",
                             ],
                             input_option="openKeyboard",
+                            display_text=False,
                             fill_in_text=True,
                         ),
                     ),
