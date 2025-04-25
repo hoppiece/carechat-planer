@@ -9,8 +9,13 @@ from typing import Literal
 
 InputOptions = Literal["openKeyboard", "openRichMenu", "closeRichMenu"]
 
+
 def generate_list_flex_bubble(  # type: ignore [no-any-unimported]
-    labels: list[str], title: str | None = None, text_align: str = "center", input_option: InputOptions | None  = None
+    labels: list[str],
+    title: str | None = None,
+    text_align: str = "center",
+    input_option: InputOptions | None = None,
+    fill_in_text: str | None = None,
 ) -> FlexBubble:
     """
     Flex Message のボタンリストを生成
@@ -39,10 +44,10 @@ def generate_list_flex_bubble(  # type: ignore [no-any-unimported]
         # ボタン風のデザインを FlexBox で作成（ここにアクションを設定）
         name_box = FlexBox(
             layout="vertical",
-            backgroundColor="#06c755", # LINE の緑
+            backgroundColor="#06c755",  # LINE の緑
             cornerRadius="md",  # 角丸
             paddingAll="lg",  # 内側の余白を増やしてボタンを大きく
-            #height="60px",  # ボタンの高さを強制的に大きくする
+            # height="60px",  # ボタンの高さを強制的に大きくする
             justifyContent="center",  # テキストを縦中央配置
             alignItems=text_align,  # ボタン内でのテキスト配置
             paddingLeft=padding_left,  # 左揃えの場合は余白を追加
@@ -51,17 +56,19 @@ def generate_list_flex_bubble(  # type: ignore [no-any-unimported]
                 data=label,
                 displayText=label,
                 inputOption=input_option,  # ここに input_option を追加
+                fillInText=label if fill_in_text is not None else None,  # テキストボックスに表示するテキスト
+
             ),
             contents=[
                 FlexText(
                     text=label,
                     weight="bold",
                     color="#FFFFFF",  # テキストを白に
-                    #align=text_alignment,  # 中央揃え or 左揃え
-                    #size="lg",  # 文字サイズを大きくしてボタン全体を大きく
+                    # align=text_alignment,  # 中央揃え or 左揃え
+                    # size="lg",  # 文字サイズを大きくしてボタン全体を大きく
                     wrap=True,  # テキストの折り返しを有効にする
                 )
-            ]
+            ],
         )
         name_list_box_contents.append(name_box)
 
@@ -71,4 +78,3 @@ def generate_list_flex_bubble(  # type: ignore [no-any-unimported]
     container.body.contents.append(name_list_box)
 
     return container
-
