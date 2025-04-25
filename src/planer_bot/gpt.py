@@ -12,7 +12,7 @@ def get_template(template_name: str) -> Template:
     return env.get_template(template_name)
 
 
-def anwer_to_care_planer(openai_client: OpenAI, answers: dict) -> str:
+def answer_to_care_planer(openai_client: OpenAI, answers: dict) -> str:
     system_prompt = get_template("careplan_system_prompt.j2").render()
     user_prompt = get_template("careplan_user_prompt.j2").render(answers)
 
