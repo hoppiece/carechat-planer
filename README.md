@@ -44,6 +44,9 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
   --role="roles/datastore.user"
 ```
 
+docker の認証
+
+`failed to authorize: failed to fetch anonymous token: unexpected status from GET request to https://gcr.io/v2/token?scope=repository%3Acarechat-prod%2Fgcr.io%2Fplaner_bot%3Apull&scope=repository%3Acarechat-prod%2Fplaner_bot%3Apull%2Cpush&service=gcr.io: 403 Forbidden`
 ```sh
 gcloud auth configure-docker
 ```

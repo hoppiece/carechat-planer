@@ -30,6 +30,7 @@ async def handle_unfollow(event: UnfollowEvent) -> None:  # type: ignore[no-any-
     user_ref.delete()
     logger.info(f"User information deleted. {line_identifier=}")
 
+
 @handler.add(JoinEvent)
 async def handle_join(event: JoinEvent) -> None:  # type: ignore[no-any-unimported]
     logger.info(f"JoinEvent. {event.source.group_id=}")
