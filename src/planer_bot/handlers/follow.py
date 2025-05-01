@@ -16,15 +16,15 @@ async def handle_follow(event: FollowEvent) -> None:
     line_identifier: str = event.source.user_id
     line_display_name: str = user_profile.display_name
 
-    logger.info(
-        f"FollowEvent. {line_identifier=}, {line_display_name=}"
-    )
+    logger.info(f"FollowEvent. {line_identifier=}, {line_display_name=}")
     default_richmenu_id = await get_default_richmenu_id()
     link_rich_menu_to_user(line_identifier, default_richmenu_id)
 
     welcome_message_1 = f"{line_display_name}さん、友達登録ありがとうございます✨"
     welcome_message_2 = "AIケアプラン作成のデモアプリです。"
-    welcome_message_3 = "↓メニューをタップで開始します。リセットして最初からやり直す場合も同様です。"
+    welcome_message_3 = (
+        "↓メニューをタップで開始します。リセットして最初からやり直す場合も同様です。"
+    )
 
     await line_bot_api.reply_message(
         ReplyMessageRequest(

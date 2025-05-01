@@ -10,6 +10,7 @@ logger = getLogger("uvicorn.app")
 
 router = APIRouter()
 
+
 @router.get("/healthz")
 async def healthz() -> str:
     return "OK"

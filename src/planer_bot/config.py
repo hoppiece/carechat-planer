@@ -19,6 +19,7 @@ logger = getLogger("uvicorn.app")
 # Load the environment variables from the .env file
 DOTENV_PATH = os.path.join(os.path.dirname(__file__), "../../.env")
 
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=DOTENV_PATH)
 
@@ -26,12 +27,13 @@ class Settings(BaseSettings):
     LINE_CHANNEL_SECRET: str
     OPENAI_API_KEY: str
     BASIC_AUTH_USERNAME: str = "admin"
-    BASIC_AUTH_PASSWORD: str 
+    BASIC_AUTH_PASSWORD: str
 
     FIRESTORE_EMULATOR_HOST: str | None = None
     FIRESTORE_DATABASE: str = "planer-bot"
 
-settings = Settings() # type: ignore
+
+settings = Settings()  # type: ignore
 
 
 # Webhook Handler for LINE Messaging API
@@ -56,11 +58,17 @@ openai_client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
 # Basic Auth settings
 security = HTTPBasic()
+
+
 def basic_authenticate(
     credentials: HTTPBasicCredentials = Depends(security),
 ) -> HTTPBasicCredentials:
-    correct_username = secrets.compare_digest(credentials.username, settings.BASIC_AUTH_USERNAME)
-    correct_password = secrets.compare_digest(credentials.password, settings.BASIC_AUTH_PASSWORD)
+    correct_username = secrets.compare_digest(
+        credentials.username, settings.BASIC_AUTH_USERNAME
+    )
+    correct_password = secrets.compare_digest(
+        credentials.password, settings.BASIC_AUTH_PASSWORD
+    )
     if not (correct_username and correct_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -69,5 +77,5 @@ def basic_authenticate(
         )
     return credentials
 
-BasicAuthDep = Annotated[HTTPBasicCredentials, Depends(basic_authenticate)]
 
+BasicAuthDep = Annotated[HTTPBasicCredentials, Depends(basic_authenticate)]
